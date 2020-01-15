@@ -1,0 +1,81 @@
+---
+- name: install consul server
+  hosts: all
+  serial: 1
+  become: true
+
+  vars:
+    CONSUL_VERSION: "1.6.2+ent"
+    NODE_NAME: "Consul-Server"
+    CONSUL_DATA_PATH: "/var/consul/data"
+    ADVERTISE_ADDR: "127.0.0.1"
+    JOIN_TAG: "my-cluster"
+    RETRY_JOIN: "provider=aws tag_key=Consul tag_value={{ JOIN_TAG }}" 
+    BOOTSTRAP_EXPECT: 1
+
+  tasks:
+
+  - name: install epel-release
+    yum:
+      name: epel-release
+      state: present
+
+  - name: install common packages
+    yum:
+      name:
+        - unzip
+        - vim
+        - jq
+      state: present
+
+  - name: download binary
+    unarchive:
+      src: "https://releases.hashicorp.com/consul/{{ CONSUL_VERSION }}/consul_{{ CONSUL_VERSION }}_linux_amd64.zip"
+      dest: /usr/local/bin
+      remote_src: yes
+      mode: 0755
+      owner: root
+      group: root
+
+  - name: Add the system user 'consul'
+    user:
+      name: consul
+      home: /etc/consul.d
+      shell: /bin/false
+      system: yes
+
+  - name: create data directory
+    file: 
+      path: /var/consul/data
+      state: directory
+      recurse: yes
+      owner: consul
+      group: consul
+
+  - name: create config directory
+    file: 
+      path: /etc/consul.d/
+      state: directory
+      recurse: yes
+      owner: consul
+      group: consul
+
+  - name: configure server
+    template:
+      src: ./files/consul-server.json.j2
+      dest: /etc/consul.d/server.json
+      mode: 0640
+      owner: consul
+      group: consul
+
+  - name: configure systemd
+    copy:
+      src: ./files/consul-server.service
+      dest: /etc/systemd/system/consul.service
+
+  - name: start consul server
+    systemd:
+      name: consul.service
+      state: restarted
+      enabled: yes
+      daemon_reload: yes
