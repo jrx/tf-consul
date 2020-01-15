@@ -60,12 +60,6 @@ resource "aws_instance" "vault" {
       "cd ansible; ansible-playbook -c local -i \"localhost,\" -e 'ADDR=${self.private_ip} NODE_NAME=vault-s${count.index}' vault-server.yml",
     ]
   }
-  provisioner "remote-exec" {
-    inline = [
-      "sudo yum -y install ansible",
-      "cd ansible; ansible-playbook -c local -i \"localhost,\" vault-server.yml",
-    ]
-  }
 
   connection {
     host        = coalesce(self.public_ip, self.private_ip)
