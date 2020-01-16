@@ -47,6 +47,16 @@ variable "num_consul" {
   default     = 3
 }
 
+variable "vault_version" {
+  default     = "1.3.1"
+  description = "Specifies which Vault version instruction to use."
+}
+
+variable "consul_version" {
+  default     = "1.6.2"
+  description = "Specifies which Consul version instruction to use."
+}
+
 variable "vault_instance_type" {
   description = "Vault server instance type."
   default     = "t2.micro"

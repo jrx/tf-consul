@@ -31,13 +31,13 @@ resource "aws_instance" "vault" {
   provisioner "remote-exec" {
     inline = [
       "sudo yum -y install ansible",
-      "cd ansible; ansible-playbook -c local -i \"localhost,\" -e 'JOIN_TAG=${var.cluster_name} BIND_ADDR=${self.private_ip} NODE_NAME=consul-c${count.index}' consul-client.yml",
+      "cd ansible; ansible-playbook -c local -i \"localhost,\" -e 'JOIN_TAG=${var.cluster_name} BIND_ADDR=${self.private_ip} NODE_NAME=consul-c${count.index} CONSUL_VERSION=${var.consul_version}' consul-client.yml",
     ]
   }
   provisioner "remote-exec" {
     inline = [
       "sudo yum -y install ansible",
-      "cd ansible; ansible-playbook -c local -i \"localhost,\" -e 'ADDR=${self.private_ip} NODE_NAME=vault-s${count.index}' vault-server.yml",
+      "cd ansible; ansible-playbook -c local -i \"localhost,\" -e 'ADDR=${self.private_ip} NODE_NAME=vault-s${count.index} VAULT_VERSION=${var.vault_version}' vault-server.yml",
     ]
   }
 
@@ -79,7 +79,7 @@ resource "aws_instance" "consul" {
   provisioner "remote-exec" {
     inline = [
       "sudo yum -y install ansible",
-      "cd ansible; ansible-playbook -c local -i \"localhost,\" -e 'JOIN_TAG=${var.cluster_name} ADVERTISE_ADDR=${self.private_ip} BOOTSTRAP_EXPECT=${var.num_consul} NODE_NAME=consul-s${count.index}' consul-server.yml",
+      "cd ansible; ansible-playbook -c local -i \"localhost,\" -e 'JOIN_TAG=${var.cluster_name} ADVERTISE_ADDR=${self.private_ip} BOOTSTRAP_EXPECT=${var.num_consul} NODE_NAME=consul-s${count.index} CONSUL_VERSION=${var.consul_version}' consul-server.yml",
     ]
   }
 

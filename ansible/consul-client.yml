@@ -5,7 +5,7 @@
   become: true
 
   vars:
-    CONSUL_VERSION: "1.6.2+ent"
+    CONSUL_VERSION: "1.6.2"
     NODE_NAME: "Consul-Client"
     CONSUL_DATA_PATH: "/var/consul/data"
     BIND_ADDR: "127.0.0.1"
