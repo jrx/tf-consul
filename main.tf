@@ -2,42 +2,22 @@ provider "aws" {
   region = var.aws_region
 }
 
-resource "aws_security_group" "allow_internal" {
-  name   = "${var.cluster_name}_allow_internal"
-  vpc_id = var.vpc_id
-
-  ingress {
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-  ingress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["172.31.0.0/16"]
-  }
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  tags = {
-    Name  = "sg-${var.cluster_name}"
-    Owner = var.owner
-  }
+terraform {
+  required_version = ">= 0.12"
+  backend "remote" {}
 }
 
 resource "aws_instance" "vault" {
-  ami                    = var.amis[var.aws_region]
-  instance_type          = var.vault_instance_type
-  key_name               = var.key_name
-  vpc_security_group_ids = ["${aws_security_group.allow_internal.id}"]
-  iam_instance_profile   = aws_iam_instance_profile.consul_profile.name
-  count                  = var.num_vault
+  ami                         = var.amis[var.aws_region]
+  instance_type               = var.vault_instance_type
+  key_name                    = var.key_name
+  vpc_security_group_ids      = ["${aws_security_group.default.id}"]
+  associate_public_ip_address = true
+  iam_instance_profile        = aws_iam_instance_profile.consul_profile.name
+  count                       = var.num_vault
+
+  availability_zone = module.vpc.azs[count.index % length(module.vpc.azs)]
+  subnet_id         = module.vpc.public_subnets[count.index % length(module.vpc.azs)]
 
   provisioner "remote-exec" {
     inline = [
@@ -80,9 +60,12 @@ resource "aws_instance" "consul" {
   ami                    = var.amis[var.aws_region]
   instance_type          = var.consul_instance_type
   key_name               = var.key_name
-  vpc_security_group_ids = ["${aws_security_group.allow_internal.id}"]
+  vpc_security_group_ids = ["${aws_security_group.default.id}"]
   iam_instance_profile   = aws_iam_instance_profile.consul_profile.name
   count                  = var.num_consul
+
+  availability_zone = module.vpc.azs[count.index % length(module.vpc.azs)]
+  subnet_id         = module.vpc.public_subnets[count.index % length(module.vpc.azs)]
 
   provisioner "remote-exec" {
     inline = [
@@ -115,7 +98,4 @@ resource "aws_instance" "consul" {
   }
 }
 
-terraform {
-  required_version = ">= 0.12"
-  backend "remote" {}
-}
+
