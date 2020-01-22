@@ -6,6 +6,14 @@ terraform {
   required_version = ">= 0.12"
   backend "remote" {}
 }
+resource "aws_kms_key" "vault" {
+  description             = "Vault unseal key"
+  deletion_window_in_days = 10
+
+  tags = {
+    Name = "${var.cluster_name}-vault-key"
+  }
+}
 
 resource "aws_instance" "vault" {
   ami                         = var.amis[var.aws_region]
@@ -13,7 +21,7 @@ resource "aws_instance" "vault" {
   key_name                    = var.key_name
   vpc_security_group_ids      = ["${aws_security_group.default.id}"]
   associate_public_ip_address = true
-  iam_instance_profile        = aws_iam_instance_profile.consul_profile.name
+  iam_instance_profile        = aws_iam_instance_profile.vault_profile.id
   count                       = var.num_vault
 
   availability_zone = module.vpc.azs[count.index % length(module.vpc.azs)]
@@ -37,7 +45,7 @@ resource "aws_instance" "vault" {
   provisioner "remote-exec" {
     inline = [
       "sudo yum -y install ansible",
-      "cd ansible; ansible-playbook -c local -i \"localhost,\" -e 'ADDR=${self.private_ip} NODE_NAME=vault-s${count.index} VAULT_VERSION=${var.vault_version}' vault-server.yml",
+      "cd ansible; ansible-playbook -c local -i \"localhost,\" -e 'ADDR=${self.private_ip} NODE_NAME=vault-s${count.index} VAULT_VERSION=${var.vault_version} KMS_KEY=${aws_kms_key.vault.id} AWS_REGION=${var.aws_region}' vault-server.yml",
     ]
   }
 
