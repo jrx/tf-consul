@@ -47,14 +47,29 @@ variable "num_consul" {
   default     = 3
 }
 
+variable "num_nomad_server" {
+  description = "Specify the amount of Nomad servers. For redundancy you should have at least 3."
+  default     = 0
+}
+
+variable "num_nomad_client" {
+  description = "Specify the amount of Nomad clients."
+  default     = 0
+}
+
 variable "vault_version" {
-  default     = "1.3.1"
+  default     = "1.3.2"
   description = "Specifies which Vault version instruction to use."
 }
 
 variable "consul_version" {
   default     = "1.6.2"
   description = "Specifies which Consul version instruction to use."
+}
+
+variable "nomad_version" {
+  default     = "0.10.3"
+  description = "Specifies which Nomad version instruction to use."
 }
 
 variable "vault_instance_type" {
@@ -64,5 +79,15 @@ variable "vault_instance_type" {
 
 variable "consul_instance_type" {
   description = "Consul server instance type."
+  default     = "t2.micro"
+}
+
+variable "nomad_server_instance_type" {
+  description = "Nomad server instance type."
+  default     = "t2.micro"
+}
+
+variable "nomad_client_instance_type" {
+  description = "Nomad client instance type."
   default     = "t2.micro"
 }
