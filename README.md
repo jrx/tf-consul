@@ -1,9 +1,7 @@
-# Vault HA Cluster
+# HashiStack on AWS
 
-## Ansible Development
+A set of Terraform and Ansible scripts to setup Vault, Consul and Nomad
 
-```sh
-ansible-playbook -i "<ip1>," ansible/consul-server.yml
-ansible-playbook -i "<ip2>," ansible/consul-client.yml
-ansible-playbook -i "<ip2>," ansible/vault-server.yml
-```
+## License
+
+[Mozilla Public License v2.0](./LICENSE)

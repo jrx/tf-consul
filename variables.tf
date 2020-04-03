@@ -39,7 +39,7 @@ variable "instance_username" {
 
 variable "num_vault" {
   description = "Specify the amount of Vault servers. For redundancy you should have at least 2."
-  default     = 2
+  default     = 1
 }
 
 variable "num_consul" {
@@ -58,17 +58,17 @@ variable "num_nomad_client" {
 }
 
 variable "vault_version" {
-  default     = "1.3.2"
+  default     = "1.3.4"
   description = "Specifies which Vault version instruction to use."
 }
 
 variable "consul_version" {
-  default     = "1.6.2"
+  default     = "1.7.2"
   description = "Specifies which Consul version instruction to use."
 }
 
 variable "nomad_version" {
-  default     = "0.10.3"
+  default     = "0.10.5"
   description = "Specifies which Nomad version instruction to use."
 }
 
