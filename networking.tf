@@ -1,6 +1,16 @@
+data "terraform_remote_state" "vpc" {
+  backend = "remote"
+  config = {
+    workspaces = {
+      name = "net-dev"
+    }
+    hostname     = "app.terraform.io"
+    organization = "jrx"
+  }
+}
 resource "aws_security_group" "default" {
   name   = "${var.cluster_name}_default"
-  vpc_id = module.vpc.vpc_id
+  vpc_id = data.terraform_remote_state.vpc.outputs.aws_vpc_id
 
   ingress {
     from_port   = 22
@@ -24,27 +34,5 @@ resource "aws_security_group" "default" {
   tags = {
     Name  = "sg-${var.cluster_name}"
     Owner = var.owner
-  }
-}
-
-module "vpc" {
-  source  = "terraform-aws-modules/vpc/aws"
-  version = "~> v2.0"
-
-  name            = "${var.cluster_name}-vpc"
-  cidr            = "10.0.0.0/16"
-  azs             = var.aws_azs
-  private_subnets = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
-  public_subnets  = ["10.0.101.0/24", "10.0.102.0/24", "10.0.103.0/24"]
-
-  enable_nat_gateway = false
-
-  vpc_tags = {
-    Name = "${var.cluster_name}-vpc"
-  }
-
-  tags = {
-    Owner = var.owner
-    # Keep = ""
   }
 }

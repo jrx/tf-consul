@@ -37,7 +37,7 @@ resource "aws_iam_policy" "consul-policy" {
 
 resource "aws_iam_policy_attachment" "consul-attach" {
   name       = "consul-attach"
-  roles      = ["${aws_iam_role.ec2_consul_discover_role.name}"]
+  roles      = [aws_iam_role.ec2_consul_discover_role.name]
   policy_arn = aws_iam_policy.consul-policy.arn
 }
 
@@ -75,7 +75,7 @@ resource "aws_iam_policy" "vault-policy" {
 
 resource "aws_iam_policy_attachment" "vault-attach" {
   name       = "vault-attach"
-  roles      = ["${aws_iam_role.vault_kms_unseal_role.id}"]
+  roles      = [aws_iam_role.vault_kms_unseal_role.id]
   policy_arn = aws_iam_policy.vault-policy.arn
 }
 

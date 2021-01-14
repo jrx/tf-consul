@@ -2,11 +2,6 @@ provider "aws" {
   region = var.aws_region
 }
 
-terraform {
-  required_version = ">= 0.12"
-  backend "remote" {}
-}
-
 resource "aws_kms_key" "vault" {
   description             = "Vault unseal key"
   deletion_window_in_days = 10
@@ -20,16 +15,19 @@ resource "aws_instance" "vault" {
   ami                         = var.amis[var.aws_region]
   instance_type               = var.vault_instance_type
   key_name                    = var.key_name
-  vpc_security_group_ids      = ["${aws_security_group.default.id}"]
+  vpc_security_group_ids      = [aws_security_group.default.id]
   associate_public_ip_address = true
   iam_instance_profile        = aws_iam_instance_profile.vault_profile.id
   count                       = var.num_vault
 
-  availability_zone = module.vpc.azs[count.index % length(module.vpc.azs)]
-  subnet_id         = module.vpc.public_subnets[count.index % length(module.vpc.azs)]
+  availability_zone = data.terraform_remote_state.vpc.outputs.aws_azs[count.index % length(data.terraform_remote_state.vpc.outputs.aws_azs)]
+  subnet_id         = data.terraform_remote_state.vpc.outputs.aws_public_subnets[count.index % length(data.terraform_remote_state.vpc.outputs.aws_azs)]
+
 
   provisioner "remote-exec" {
     inline = [
+      "sudo yum -y install epel-release",
+      "sudo yum -y install ansible",
       "mkdir /home/${var.instance_username}/ansible",
     ]
   }
@@ -39,13 +37,11 @@ resource "aws_instance" "vault" {
   }
   provisioner "remote-exec" {
     inline = [
-      "sudo yum -y install ansible",
       "cd ansible; ansible-playbook -c local -i \"localhost,\" -e 'JOIN_TAG=${var.cluster_name} BIND_ADDR=${self.private_ip} NODE_NAME=consul-c${count.index} CONSUL_VERSION=${var.consul_version}' consul-client.yml",
     ]
   }
   provisioner "remote-exec" {
     inline = [
-      "sudo yum -y install ansible",
       "cd ansible; ansible-playbook -c local -i \"localhost,\" -e 'ADDR=${self.private_ip} NODE_NAME=vault-s${count.index} VAULT_VERSION=${var.vault_version} KMS_KEY=${aws_kms_key.vault.id} AWS_REGION=${var.aws_region}' vault-server.yml",
     ]
   }
@@ -61,7 +57,7 @@ resource "aws_instance" "vault" {
     Name  = "${var.cluster_name}-vault-${count.index}"
     Owner = var.owner
     # Keep = ""
-    Consul = "${var.cluster_name}"
+    Consul = var.cluster_name
   }
 }
 
@@ -69,15 +65,18 @@ resource "aws_instance" "consul" {
   ami                    = var.amis[var.aws_region]
   instance_type          = var.consul_instance_type
   key_name               = var.key_name
-  vpc_security_group_ids = ["${aws_security_group.default.id}"]
+  vpc_security_group_ids = [aws_security_group.default.id]
   iam_instance_profile   = aws_iam_instance_profile.consul_profile.name
   count                  = var.num_consul
 
-  availability_zone = module.vpc.azs[count.index % length(module.vpc.azs)]
-  subnet_id         = module.vpc.public_subnets[count.index % length(module.vpc.azs)]
+  availability_zone = data.terraform_remote_state.vpc.outputs.aws_azs[count.index % length(data.terraform_remote_state.vpc.outputs.aws_azs)]
+  subnet_id         = data.terraform_remote_state.vpc.outputs.aws_public_subnets[count.index % length(data.terraform_remote_state.vpc.outputs.aws_azs)]
+
 
   provisioner "remote-exec" {
     inline = [
+      "sudo yum -y install epel-release",
+      "sudo yum -y install ansible",
       "mkdir /home/${var.instance_username}/ansible",
     ]
   }
@@ -87,7 +86,6 @@ resource "aws_instance" "consul" {
   }
   provisioner "remote-exec" {
     inline = [
-      "sudo yum -y install ansible",
       "cd ansible; ansible-playbook -c local -i \"localhost,\" -e 'JOIN_TAG=${var.cluster_name} ADVERTISE_ADDR=${self.private_ip} BOOTSTRAP_EXPECT=${var.num_consul} NODE_NAME=consul-s${count.index} CONSUL_VERSION=${var.consul_version}' consul-server.yml",
     ]
   }
@@ -103,7 +101,7 @@ resource "aws_instance" "consul" {
     Name  = "${var.cluster_name}-consul-${count.index}"
     Owner = var.owner
     # Keep = ""
-    Consul = "${var.cluster_name}"
+    Consul = var.cluster_name
   }
 }
 
@@ -111,16 +109,19 @@ resource "aws_instance" "nomad_server" {
   ami                         = var.amis[var.aws_region]
   instance_type               = var.nomad_server_instance_type
   key_name                    = var.key_name
-  vpc_security_group_ids      = ["${aws_security_group.default.id}"]
+  vpc_security_group_ids      = [aws_security_group.default.id]
   associate_public_ip_address = true
   iam_instance_profile        = aws_iam_instance_profile.consul_profile.name
   count                       = var.num_nomad_server
 
-  availability_zone = module.vpc.azs[count.index % length(module.vpc.azs)]
-  subnet_id         = module.vpc.public_subnets[count.index % length(module.vpc.azs)]
+  availability_zone = data.terraform_remote_state.vpc.outputs.aws_azs[count.index % length(data.terraform_remote_state.vpc.outputs.aws_azs)]
+  subnet_id         = data.terraform_remote_state.vpc.outputs.aws_public_subnets[count.index % length(data.terraform_remote_state.vpc.outputs.aws_azs)]
+
 
   provisioner "remote-exec" {
     inline = [
+      "sudo yum -y install epel-release",
+      "sudo yum -y install ansible",
       "mkdir /home/${var.instance_username}/ansible",
     ]
   }
@@ -130,13 +131,11 @@ resource "aws_instance" "nomad_server" {
   }
   provisioner "remote-exec" {
     inline = [
-      "sudo yum -y install ansible",
       "cd ansible; ansible-playbook -c local -i \"localhost,\" -e 'JOIN_TAG=${var.cluster_name} BIND_ADDR=${self.private_ip} NODE_NAME=nomad-s${count.index} CONSUL_VERSION=${var.consul_version}' consul-client.yml",
     ]
   }
   provisioner "remote-exec" {
     inline = [
-      "sudo yum -y install ansible",
       "cd ansible; ansible-playbook -c local -i \"localhost,\" -e 'NOMAD_VERSION=${var.nomad_version} BOOTSTRAP_EXPECT=${var.num_nomad_server} SERVER_ENABLED=true CLIENT_ENABLED=false' nomad.yml",
     ]
   }
@@ -152,7 +151,7 @@ resource "aws_instance" "nomad_server" {
     Name  = "${var.cluster_name}-nomad-server-${count.index}"
     Owner = var.owner
     # Keep = ""
-    Consul = "${var.cluster_name}"
+    Consul = var.cluster_name
   }
 }
 
@@ -160,16 +159,19 @@ resource "aws_instance" "nomad_client" {
   ami                         = var.amis[var.aws_region]
   instance_type               = var.nomad_client_instance_type
   key_name                    = var.key_name
-  vpc_security_group_ids      = ["${aws_security_group.default.id}"]
+  vpc_security_group_ids      = [aws_security_group.default.id]
   associate_public_ip_address = true
   iam_instance_profile        = aws_iam_instance_profile.consul_profile.name
   count                       = var.num_nomad_client
 
-  availability_zone = module.vpc.azs[count.index % length(module.vpc.azs)]
-  subnet_id         = module.vpc.public_subnets[count.index % length(module.vpc.azs)]
+  availability_zone = data.terraform_remote_state.vpc.outputs.aws_azs[count.index % length(data.terraform_remote_state.vpc.outputs.aws_azs)]
+  subnet_id         = data.terraform_remote_state.vpc.outputs.aws_public_subnets[count.index % length(data.terraform_remote_state.vpc.outputs.aws_azs)]
+
 
   provisioner "remote-exec" {
     inline = [
+      "sudo yum -y install epel-release",
+      "sudo yum -y install ansible",
       "mkdir /home/${var.instance_username}/ansible",
     ]
   }
@@ -179,13 +181,11 @@ resource "aws_instance" "nomad_client" {
   }
   provisioner "remote-exec" {
     inline = [
-      "sudo yum -y install ansible",
       "cd ansible; ansible-playbook -c local -i \"localhost,\" -e 'JOIN_TAG=${var.cluster_name} BIND_ADDR=${self.private_ip} NODE_NAME=nomad-s${count.index} CONSUL_VERSION=${var.consul_version}' consul-client.yml",
     ]
   }
   provisioner "remote-exec" {
     inline = [
-      "sudo yum -y install ansible",
       "cd ansible; ansible-playbook -c local -i \"localhost,\" -e 'NOMAD_VERSION=${var.nomad_version} BOOTSTRAP_EXPECT=${var.num_nomad_client} SERVER_ENABLED=false CLIENT_ENABLED=true' nomad.yml",
     ]
   }
@@ -201,6 +201,6 @@ resource "aws_instance" "nomad_client" {
     Name  = "${var.cluster_name}-nomad-client-${count.index}"
     Owner = var.owner
     # Keep = ""
-    Consul = "${var.cluster_name}"
+    Consul = var.cluster_name
   }
 }

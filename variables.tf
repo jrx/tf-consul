@@ -17,19 +17,19 @@ variable "private_key" {
 }
 
 variable "aws_region" {
-  default = "eu-central-1"
+  default = "eu-north-1"
 }
 
 variable "aws_azs" {
-  type        = list
+  type        = list(any)
   description = "List of the availability zones to use."
-  default     = ["eu-central-1a", "eu-central-1b", "eu-central-1c"]
+  default     = ["eu-north-1a", "eu-north-1b", "eu-north-1c"]
 }
 
 variable "amis" {
   type = map(string)
   default = {
-    eu-central-1 = "ami-337be65c" # centos 7
+    eu-north-1 = "ami-026f0eb2e8006617d" # centos 7
   }
 }
 
@@ -39,7 +39,7 @@ variable "instance_username" {
 
 variable "num_vault" {
   description = "Specify the amount of Vault servers. For redundancy you should have at least 2."
-  default     = 1
+  default     = 2
 }
 
 variable "num_consul" {
@@ -58,36 +58,36 @@ variable "num_nomad_client" {
 }
 
 variable "vault_version" {
-  default     = "1.3.4"
+  default     = "1.6.1"
   description = "Specifies which Vault version instruction to use."
 }
 
 variable "consul_version" {
-  default     = "1.7.2"
+  default     = "1.9.1"
   description = "Specifies which Consul version instruction to use."
 }
 
 variable "nomad_version" {
-  default     = "0.10.5"
+  default     = "1.0.1"
   description = "Specifies which Nomad version instruction to use."
 }
 
 variable "vault_instance_type" {
   description = "Vault server instance type."
-  default     = "t2.micro"
+  default     = "t3.micro"
 }
 
 variable "consul_instance_type" {
   description = "Consul server instance type."
-  default     = "t2.micro"
+  default     = "t3.micro"
 }
 
 variable "nomad_server_instance_type" {
   description = "Nomad server instance type."
-  default     = "t2.micro"
+  default     = "t3.micro"
 }
 
 variable "nomad_client_instance_type" {
   description = "Nomad client instance type."
-  default     = "t2.micro"
+  default     = "t3.micro"
 }
