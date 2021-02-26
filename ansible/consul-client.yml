@@ -25,6 +25,7 @@
         - unzip
         - vim
         - jq
+        - bind-utils
       state: present
 
   - name: download binary

@@ -40,11 +40,11 @@ resource "aws_instance" "vault" {
       "cd ansible; ansible-playbook -c local -i \"localhost,\" -e 'JOIN_TAG=${var.cluster_name} BIND_ADDR=${self.private_ip} NODE_NAME=consul-c${count.index} CONSUL_VERSION=${var.consul_version}' consul-client.yml",
     ]
   }
-  provisioner "remote-exec" {
-    inline = [
-      "cd ansible; ansible-playbook -c local -i \"localhost,\" -e 'ADDR=${self.private_ip} NODE_NAME=vault-s${count.index} VAULT_VERSION=${var.vault_version} KMS_KEY=${aws_kms_key.vault.id} AWS_REGION=${var.aws_region}' vault-server.yml",
-    ]
-  }
+  # provisioner "remote-exec" {
+  #   inline = [
+  #     "cd ansible; ansible-playbook -c local -i \"localhost,\" -e 'ADDR=${self.private_ip} NODE_NAME=vault-s${count.index} VAULT_VERSION=${var.vault_version} KMS_KEY=${aws_kms_key.vault.id} AWS_REGION=${var.aws_region}' vault-server.yml",
+  #   ]
+  # }
 
   connection {
     host        = coalesce(self.public_ip, self.private_ip)
@@ -86,7 +86,7 @@ resource "aws_instance" "consul" {
   }
   provisioner "remote-exec" {
     inline = [
-      "cd ansible; ansible-playbook -c local -i \"localhost,\" -e 'JOIN_TAG=${var.cluster_name} ADVERTISE_ADDR=${self.private_ip} BOOTSTRAP_EXPECT=${var.num_consul} NODE_NAME=consul-s${count.index} CONSUL_VERSION=${var.consul_version}' consul-server.yml",
+      "cd ansible; ansible-playbook -c local -i \"localhost,\" -e 'JOIN_TAG=${var.cluster_name} ZONE=${self.availability_zone} ADVERTISE_ADDR=${self.private_ip} BOOTSTRAP_EXPECT=${var.num_consul} NODE_NAME=consul-s${count.index} CONSUL_VERSION=${var.consul_version}' consul-server.yml",
     ]
   }
 

@@ -6,7 +6,10 @@
   "bind_addr": "{{ BIND_ADDR }}",
   "client_addr": "127.0.0.1",
   "retry_join": ["{{ RETRY_JOIN }}"],
-  "log_level": "DEBUG",
+  "log_level": "INFO",
   "enable_syslog": true,
-  "acl_enforce_version_8": false
+  "acl_enforce_version_8": false,
+  "connect": {
+    "enabled": true
+  }
 }

@@ -11,6 +11,7 @@
     ADVERTISE_ADDR: "127.0.0.1"
     JOIN_TAG: "my-cluster"
     RETRY_JOIN: "provider=aws tag_key=Consul tag_value={{ JOIN_TAG }}" 
+    ZONE: "my-zone"
     BOOTSTRAP_EXPECT: 1
 
   tasks:
@@ -26,6 +27,7 @@
         - unzip
         - vim
         - jq
+        - bind-utils
       state: present
 
   - name: download binary

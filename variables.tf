@@ -29,7 +29,8 @@ variable "aws_azs" {
 variable "amis" {
   type = map(string)
   default = {
-    eu-north-1 = "ami-026f0eb2e8006617d" # centos 7
+#   eu-north-1 = "ami-026f0eb2e8006617d" # centos 7
+    eu-north-1 = "ami-0e201bc52c64d7b5a" # centos 8
   }
 }
 
@@ -39,7 +40,7 @@ variable "instance_username" {
 
 variable "num_vault" {
   description = "Specify the amount of Vault servers. For redundancy you should have at least 2."
-  default     = 2
+  default     = 1
 }
 
 variable "num_consul" {
@@ -58,12 +59,12 @@ variable "num_nomad_client" {
 }
 
 variable "vault_version" {
-  default     = "1.6.1"
+  default     = "1.6.3"
   description = "Specifies which Vault version instruction to use."
 }
 
 variable "consul_version" {
-  default     = "1.9.1"
+  default     = "1.9.3"
   description = "Specifies which Consul version instruction to use."
 }
 
