@@ -6,6 +6,7 @@
 
   vars:
     CONSUL_VERSION: "1.6.2"
+    CONSUL_LICENSE: ""
     NODE_NAME: "Consul-Client"
     CONSUL_DATA_PATH: "/var/consul/data"
     BIND_ADDR: "127.0.0.1"
@@ -57,6 +58,14 @@
       path: /etc/consul.d/
       state: directory
       recurse: yes
+      owner: consul
+      group: consul
+
+  - name: configure env file
+    template:
+      src: ./files/consul-env.conf.j2
+      dest: /etc/consul.d/env.conf
+      mode: 0640
       owner: consul
       group: consul
 
