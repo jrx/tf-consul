@@ -1,6 +1,31 @@
 {
   "server": true,
   "node_name": "{{ NODE_NAME }}",
+  "acl": {
+    "enabled": true,
+    "default_policy": "deny",
+    "enable_token_persistence": true,
+    "tokens": {
+      "initial_management": "{{ CONSUL_INITIAL_MANAGEMENT_TOKEN }}"
+    }
+  },
+  "ports": {
+    "grpc": 8502,
+    "https": 8501,
+    "http": 8500
+  },
+  "encrypt": "{{ CONSUL_GOSSIP_ENCRYPTION_KEY }}",
+  "encrypt_verify_incoming": true,
+  "encrypt_verify_outgoing": true,
+  "verify_incoming": false,
+  "verify_outgoing": true,
+  "verify_server_hostname": false,
+  "ca_file": "/etc/consul.d/consul-agent-ca.pem",
+  "cert_file": "/etc/consul.d/dc1-server-consul-0.pem",
+  "key_file": "/etc/consul.d/dc1-server-consul-0-key.pem",
+  "auto_encrypt": {
+    "allow_tls": true
+  },
   "datacenter": "dc1",
   "data_dir": "{{ CONSUL_DATA_PATH }}",
   "bind_addr": "0.0.0.0",
@@ -11,7 +36,6 @@
   "ui": true,
   "log_level": "INFO",
   "enable_syslog": true,
-  "acl_enforce_version_8": false,
   "node_meta": {
     "zone": "{{ ZONE }}"
   },

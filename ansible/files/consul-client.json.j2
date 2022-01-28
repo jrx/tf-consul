@@ -1,14 +1,36 @@
   {
   "server": false,
   "datacenter": "dc1",
+  "partition": "default",
   "node_name": "{{ NODE_NAME }}",
+  "acl": {
+    "enabled": true,
+    "default_policy": "deny",
+    "enable_token_persistence": true
+  },
+  "ports": {
+    "grpc": 8502,
+    "https": 8501,
+    "http": 8500
+  },
+  "encrypt": "{{ CONSUL_GOSSIP_ENCRYPTION_KEY }}",
+  "encrypt_verify_incoming": true,
+  "encrypt_verify_outgoing": true,
+  "verify_incoming": false,
+  "verify_incoming_https": false,
+  "verify_incoming_rpc": false,
+  "verify_outgoing": true,
+  "verify_server_hostname": false,
+  "ca_file": "/etc/consul.d/consul-agent-ca.pem",
+  "auto_encrypt": {
+    "tls": true
+  },
   "data_dir": "{{ CONSUL_DATA_PATH }}",
   "bind_addr": "{{ BIND_ADDR }}",
   "client_addr": "127.0.0.1",
   "retry_join": ["{{ RETRY_JOIN }}"],
   "log_level": "INFO",
   "enable_syslog": true,
-  "acl_enforce_version_8": false,
   "connect": {
     "enabled": true
   }

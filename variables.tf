@@ -97,3 +97,13 @@ variable "consul_license" {
   default     = ""
   description = "Consul license string."
 }
+
+variable "consul_gossip_encryption_key" {
+  default     = ""
+  description = "Consul Gossip encryption string."
+}
+
+variable "consul_initial_management_token" {
+  default     = ""
+  description = "Consul initial management token string."
+}

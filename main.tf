@@ -37,7 +37,7 @@ resource "aws_instance" "vault" {
   }
   provisioner "remote-exec" {
     inline = [
-      "cd ansible; ansible-playbook -c local -i \"localhost,\" -e 'JOIN_TAG=${var.cluster_name} BIND_ADDR=${self.private_ip} NODE_NAME=consul-c${count.index} CONSUL_LICENSE=${var.consul_license} CONSUL_VERSION=${var.consul_version}' consul-client.yml",
+      "cd ansible; ansible-playbook -c local -i \"localhost,\" -e 'JOIN_TAG=${var.cluster_name} BIND_ADDR=${self.private_ip} NODE_NAME=consul-c${count.index} CONSUL_LICENSE=${var.consul_license} CONSUL_GOSSIP_ENCRYPTION_KEY=${var.consul_gossip_encryption_key} CONSUL_VERSION=${var.consul_version}' consul-client.yml",
     ]
   }
   # provisioner "remote-exec" {
@@ -86,7 +86,7 @@ resource "aws_instance" "consul" {
   }
   provisioner "remote-exec" {
     inline = [
-      "cd ansible; ansible-playbook -c local -i \"localhost,\" -e 'JOIN_TAG=${var.cluster_name} ZONE=${self.availability_zone} ADVERTISE_ADDR=${self.private_ip} BOOTSTRAP_EXPECT=${var.num_consul} NODE_NAME=consul-s${count.index} CONSUL_LICENSE=${var.consul_license} CONSUL_VERSION=${var.consul_version}' consul-server.yml",
+      "cd ansible; ansible-playbook -c local -i \"localhost,\" -e 'JOIN_TAG=${var.cluster_name} ZONE=${self.availability_zone} ADVERTISE_ADDR=${self.private_ip} BOOTSTRAP_EXPECT=${var.num_consul} NODE_NAME=consul-s${count.index} CONSUL_LICENSE=${var.consul_license} CONSUL_GOSSIP_ENCRYPTION_KEY=${var.consul_gossip_encryption_key} CONSUL_INITIAL_MANAGEMENT_TOKEN=${var.consul_initial_management_token} CONSUL_VERSION=${var.consul_version}' consul-server.yml",
     ]
   }
 

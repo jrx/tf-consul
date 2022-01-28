@@ -7,6 +7,7 @@
   vars:
     CONSUL_VERSION: "1.6.2"
     CONSUL_LICENSE: ""
+    CONSUL_GOSSIP_ENCRYPTION_KEY: ""
     NODE_NAME: "Consul-Client"
     CONSUL_DATA_PATH: "/var/consul/data"
     BIND_ADDR: "127.0.0.1"
@@ -65,6 +66,14 @@
     template:
       src: ./files/consul-env.conf.j2
       dest: /etc/consul.d/env.conf
+      mode: 0640
+      owner: consul
+      group: consul
+
+  - name: create ca file
+    template:
+      src: ./files/consul-agent-ca.pem
+      dest: /etc/consul.d/consul-agent-ca.pem
       mode: 0640
       owner: consul
       group: consul

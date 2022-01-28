@@ -7,6 +7,7 @@
   vars:
     CONSUL_VERSION: "1.6.2"
     CONSUL_LICENSE: ""
+    CONSUL_GOSSIP_ENCRYPTION_KEY: ""
     NODE_NAME: "Consul-Server"
     CONSUL_DATA_PATH: "/var/consul/data"
     ADVERTISE_ADDR: "127.0.0.1"
@@ -70,6 +71,31 @@
       mode: 0640
       owner: consul
       group: consul
+
+  - name: create ca file
+    template:
+      src: ./files/consul-agent-ca.pem
+      dest: /etc/consul.d/consul-agent-ca.pem
+      mode: 0640
+      owner: consul
+      group: consul
+
+  - name: create key file
+    template:
+      src: ./files/consul-agent-ca-key.pem
+      dest: /etc/consul.d/consul-agent-ca-key.pem
+      mode: 0640
+      owner: consul
+      group: consul
+
+  - name: create server cert
+    ansible.builtin.command:
+      cmd: /usr/local/bin/consul tls cert create -server -node {{ NODE_NAME }} -dc dc1 -additional-dnsname {{ NODE_NAME }}.dc1.consul -additional-dnsname server.dc1.consul -additional-ipaddress={{ ADVERTISE_ADDR}}
+    become: yes
+    become_user: consul
+    args:
+      chdir: /etc/consul.d/
+      creates: /etc/consul.d/dc1-server-consul-0.pem
 
   - name: configure server
     template:
