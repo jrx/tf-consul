@@ -2,7 +2,7 @@
   "server": true,
   "node_name": "{{ NODE_NAME }}",
   "acl": {
-    "enabled": true,
+    "enabled": false,
     "default_policy": "deny",
     "enable_token_persistence": true,
     "tokens": {
@@ -20,6 +20,7 @@
   "verify_incoming": false,
   "verify_outgoing": true,
   "verify_server_hostname": false,
+  "verify_incoming_rpc": false,
   "ca_file": "/etc/consul.d/consul-agent-ca.pem",
   "cert_file": "/etc/consul.d/dc1-server-consul-0.pem",
   "key_file": "/etc/consul.d/dc1-server-consul-0-key.pem",
