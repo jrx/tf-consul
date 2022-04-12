@@ -6,6 +6,7 @@
 
   vars:
     NOMAD_VERSION: "0.10.3"
+    NOMAD_LICENSE: ""
     BOOTSTRAP_EXPECT: 1
     SERVER_ENABLED: "true"
     CLIENT_ENABLED: "true"
@@ -23,6 +24,7 @@
         - unzip
         - vim
         - jq
+        - docker
       state: present
 
   - name: download binary
@@ -47,6 +49,13 @@
       path: /etc/nomad.d/
       state: directory
       recurse: yes
+      owner: root
+      group: root
+
+  - name: configure env file
+    template:
+      src: ./files/nomad-env.conf.j2
+      dest: /etc/nomad.d/env.conf
       owner: root
       group: root
 
@@ -80,6 +89,13 @@
     copy:
       src: ./files/nomad.service
       dest: /etc/systemd/system/nomad.service
+
+  - name: start podman service
+    systemd:
+      name: podman.service
+      state: restarted
+      enabled: yes
+      daemon_reload: yes
 
   - name: start nomad server
     systemd:

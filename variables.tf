@@ -94,6 +94,11 @@ variable "nomad_client_instance_type" {
   default     = "t3.micro"
 }
 
+variable "nomad_license" {
+  default     = ""
+  description = "Nomad license string."
+}
+
 variable "consul_license" {
   default     = ""
   description = "Consul license string."

@@ -6,6 +6,7 @@ After=network-online.target
 
 [Service]
 ExecReload=/bin/kill -HUP $MAINPID
+EnvironmentFile=/etc/nomad.d/env.conf
 ExecStart=/usr/local/bin/nomad agent -config /etc/nomad.d
 KillMode=process
 KillSignal=SIGINT
