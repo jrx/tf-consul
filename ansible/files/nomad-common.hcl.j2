@@ -3,6 +3,7 @@ data_dir = "/var/nomad/data"
 
 consul {
   address = "127.0.0.1:8501"
+  token = "{{ CONSUL_NOMAD_TOKEN }}"
   ssl = true
   verify_ssl = true
   ca_file = "/etc/consul.d/consul-agent-ca.pem"

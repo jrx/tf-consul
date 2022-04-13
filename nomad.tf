@@ -24,12 +24,12 @@ resource "aws_instance" "nomad_server" {
   }
   provisioner "remote-exec" {
     inline = [
-      "cd ansible; ansible-playbook -c local -i \"localhost,\" -e 'JOIN_TAG=${var.cluster_name} BIND_ADDR=${self.private_ip} NODE_NAME=nomad-s${count.index} CONSUL_LICENSE=${var.consul_license} CONSUL_GOSSIP_ENCRYPTION_KEY=${var.consul_gossip_encryption_key} CONSUL_VERSION=${var.consul_version}' consul-client.yml",
+      "cd ansible; ansible-playbook -c local -i \"localhost,\" -e 'JOIN_TAG=${var.cluster_name} BIND_ADDR=${self.private_ip} NODE_NAME=nomad-s${count.index} CONSUL_LICENSE=${var.consul_license} CONSUL_GOSSIP_ENCRYPTION_KEY=${var.consul_gossip_encryption_key} CONSUL_CLIENT_TOKEN=${var.consul_client_token} CONSUL_VERSION=${var.consul_version}' consul-client.yml",
     ]
   }
   provisioner "remote-exec" {
     inline = [
-      "cd ansible; ansible-playbook -c local -i \"localhost,\" -e 'NOMAD_VERSION=${var.nomad_version} NOMAD_LICENSE=${var.nomad_license} BOOTSTRAP_EXPECT=${var.num_nomad_server} SERVER_ENABLED=true CLIENT_ENABLED=false' nomad.yml",
+      "cd ansible; ansible-playbook -c local -i \"localhost,\" -e 'NOMAD_VERSION=${var.nomad_version} NOMAD_LICENSE=${var.nomad_license} BOOTSTRAP_EXPECT=${var.num_nomad_server} CONSUL_NOMAD_TOKEN=${var.consul_nomad_server_token} SERVER_ENABLED=true CLIENT_ENABLED=false' nomad.yml",
     ]
   }
 
@@ -74,12 +74,12 @@ resource "aws_instance" "nomad_client" {
   }
   provisioner "remote-exec" {
     inline = [
-      "cd ansible; ansible-playbook -c local -i \"localhost,\" -e 'JOIN_TAG=${var.cluster_name} BIND_ADDR=${self.private_ip} NODE_NAME=nomad-c${count.index} CONSUL_LICENSE=${var.consul_license} CONSUL_GOSSIP_ENCRYPTION_KEY=${var.consul_gossip_encryption_key} CONSUL_VERSION=${var.consul_version}' consul-client.yml",
+      "cd ansible; ansible-playbook -c local -i \"localhost,\" -e 'JOIN_TAG=${var.cluster_name} BIND_ADDR=${self.private_ip} NODE_NAME=nomad-c${count.index} CONSUL_LICENSE=${var.consul_license} CONSUL_GOSSIP_ENCRYPTION_KEY=${var.consul_gossip_encryption_key} CONSUL_CLIENT_TOKEN=${var.consul_client_token} CONSUL_VERSION=${var.consul_version}' consul-client.yml",
     ]
   }
   provisioner "remote-exec" {
     inline = [
-      "cd ansible; ansible-playbook -c local -i \"localhost,\" -e 'NOMAD_VERSION=${var.nomad_version} NOMAD_LICENSE=${var.nomad_license} BOOTSTRAP_EXPECT=${var.num_nomad_client} SERVER_ENABLED=false CLIENT_ENABLED=true' nomad.yml",
+      "cd ansible; ansible-playbook -c local -i \"localhost,\" -e 'NOMAD_VERSION=${var.nomad_version} NOMAD_LICENSE=${var.nomad_license} BOOTSTRAP_EXPECT=${var.num_nomad_client} CONSUL_NOMAD_TOKEN=${var.consul_nomad_client_token} SERVER_ENABLED=false CLIENT_ENABLED=true' nomad.yml",
     ]
   }
 

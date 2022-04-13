@@ -15,6 +15,7 @@
     RETRY_JOIN: "provider=aws tag_key=Consul tag_value={{ JOIN_TAG }}" 
     ZONE: "my-zone"
     BOOTSTRAP_EXPECT: 1
+    CONSUL_INITIAL_MANAGEMENT_TOKEN: ""
 
   tasks:
 

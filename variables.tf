@@ -98,3 +98,18 @@ variable "consul_initial_management_token" {
   default     = ""
   description = "Consul initial management token string."
 }
+
+variable "consul_client_token" {
+  default     = ""
+  description = "Consul client token string."
+}
+
+variable "consul_nomad_server_token" {
+  default     = ""
+  description = "Consul Nomad server token string."
+}
+
+variable "consul_nomad_client_token" {
+  default     = ""
+  description = "Consul Nomad client token string."
+}

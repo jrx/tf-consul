@@ -13,6 +13,7 @@
     BIND_ADDR: "127.0.0.1"
     JOIN_TAG: "my-cluster"
     RETRY_JOIN: "provider=aws tag_key=Consul tag_value={{ JOIN_TAG }}" 
+    CONSUL_CLIENT_TOKEN: ""
 
   tasks:
 

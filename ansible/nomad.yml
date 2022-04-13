@@ -10,6 +10,7 @@
     BOOTSTRAP_EXPECT: 1
     SERVER_ENABLED: "true"
     CLIENT_ENABLED: "true"
+    CONSUL_NOMAD_TOKEN: ""
 
   tasks:
 

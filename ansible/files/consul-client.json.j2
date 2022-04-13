@@ -4,9 +4,12 @@
   "partition": "default",
   "node_name": "{{ NODE_NAME }}",
   "acl": {
-    "enabled": false,
+    "enabled": true,
     "default_policy": "deny",
-    "enable_token_persistence": true
+    "enable_token_persistence": true,
+    "tokens": {
+      "agent": "{{ CONSUL_CLIENT_TOKEN }}"
+    }
   },
   "ports": {
     "grpc": 8502,
