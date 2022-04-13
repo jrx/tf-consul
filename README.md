@@ -1,6 +1,6 @@
 # HashiStack on AWS
 
-A set of Terraform and Ansible scripts to setup Vault, Consul and Nomad
+A set of Terraform and Ansible scripts to setup Consul and Nomad
 
 ## License
 
