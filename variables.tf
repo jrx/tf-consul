@@ -39,11 +39,6 @@ variable "instance_username" {
   default = "rocky"
 }
 
-variable "num_vault" {
-  description = "Specify the amount of Vault servers. For redundancy you should have at least 2."
-  default     = 1
-}
-
 variable "num_consul" {
   description = "Specify the amount of Consul servers. For redundancy you should have at least 3."
   default     = 3
@@ -59,11 +54,6 @@ variable "num_nomad_client" {
   default     = 0
 }
 
-variable "vault_version" {
-  default     = "1.6.3"
-  description = "Specifies which Vault version instruction to use."
-}
-
 variable "consul_version" {
   default     = "1.9.3"
   description = "Specifies which Consul version instruction to use."
@@ -72,11 +62,6 @@ variable "consul_version" {
 variable "nomad_version" {
   default     = "1.0.1"
   description = "Specifies which Nomad version instruction to use."
-}
-
-variable "vault_instance_type" {
-  description = "Vault server instance type."
-  default     = "t3.micro"
 }
 
 variable "consul_instance_type" {

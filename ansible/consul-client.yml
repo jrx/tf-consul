@@ -78,6 +78,23 @@
       owner: consul
       group: consul
 
+  - name: create key file
+    template:
+      src: ./files/consul-agent-ca-key.pem
+      dest: /etc/consul.d/consul-agent-ca-key.pem
+      mode: 0640
+      owner: consul
+      group: consul
+
+  - name: create client cert
+    ansible.builtin.command:
+      cmd: /usr/local/bin/consul tls cert create -client
+    become: yes
+    become_user: consul
+    args:
+      chdir: /etc/consul.d/
+      creates: /etc/consul.d/dc1-client-consul-0.pem
+
   - name: configure client
     template:
       src: ./files/consul-client.json.j2
