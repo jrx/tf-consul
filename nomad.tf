@@ -29,7 +29,7 @@ resource "aws_instance" "nomad_server" {
   }
   provisioner "remote-exec" {
     inline = [
-      "cd ansible; ansible-playbook -c local -i \"localhost,\" -e 'NOMAD_VERSION=${var.nomad_version} NOMAD_LICENSE=${var.nomad_license} BOOTSTRAP_EXPECT=${var.num_nomad_server} CONSUL_NOMAD_TOKEN=${nonsensitive(data.consul_acl_token_secret_id.nomad_server.secret_id)} SERVER_ENABLED=true CLIENT_ENABLED=false' nomad.yml",
+      "cd ansible; ansible-playbook -c local -i \"localhost,\" -e 'NOMAD_VERSION=${var.nomad_version} NOMAD_LICENSE=${var.nomad_license} BOOTSTRAP_EXPECT=${var.num_nomad_server} CONSUL_NOMAD_TOKEN=${local.consul_acl_token_secret_id.nomad_server} SERVER_ENABLED=true CLIENT_ENABLED=false' nomad.yml",
     ]
   }
 
@@ -79,7 +79,7 @@ resource "aws_instance" "nomad_client" {
   }
   provisioner "remote-exec" {
     inline = [
-      "cd ansible; ansible-playbook -c local -i \"localhost,\" -e 'NOMAD_VERSION=${var.nomad_version} NOMAD_LICENSE=${var.nomad_license} BOOTSTRAP_EXPECT=${var.num_nomad_client} CONSUL_NOMAD_TOKEN=${nonsensitive(data.consul_acl_token_secret_id.nomad_client.secret_id)} SERVER_ENABLED=false CLIENT_ENABLED=true' nomad.yml",
+      "cd ansible; ansible-playbook -c local -i \"localhost,\" -e 'NOMAD_VERSION=${var.nomad_version} NOMAD_LICENSE=${var.nomad_license} BOOTSTRAP_EXPECT=${var.num_nomad_client} CONSUL_NOMAD_TOKEN=${local.consul_acl_token_secret_id.nomad_client} SERVER_ENABLED=false CLIENT_ENABLED=true' nomad.yml",
     ]
   }
 
