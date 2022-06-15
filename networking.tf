@@ -12,12 +12,14 @@ resource "aws_security_group" "default" {
   name   = "${var.cluster_name}_default"
   vpc_id = data.terraform_remote_state.vpc.outputs.aws_vpc_id
 
+  # SSH
   ingress {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
+  # Mesh Gateway
   ingress {
     from_port   = 8181
     to_port     = 8181

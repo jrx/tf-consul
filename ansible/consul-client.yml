@@ -98,8 +98,8 @@
 
   - name: configure client
     template:
-      src: ./files/consul-client.json.j2
-      dest: /etc/consul.d/client.json
+      src: ./files/consul-client.hcl.j2
+      dest: /etc/consul.d/client.hcl
       mode: 0640
       owner: consul
       group: consul
