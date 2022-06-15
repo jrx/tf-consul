@@ -100,8 +100,8 @@
 
   - name: configure server
     template:
-      src: ./files/consul-server.json.j2
-      dest: /etc/consul.d/server.json
+      src: ./files/consul-server.hcl.j2
+      dest: /etc/consul.d/server.hcl
       mode: 0640
       owner: consul
       group: consul
