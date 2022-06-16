@@ -1,0 +1,15 @@
+[Unit]
+Description=Consul Mesh Gateway
+Requires=network-online.target
+After=network-online.target
+
+[Service]
+User=consul
+Group=consul
+EnvironmentFile=/etc/consul.d/mesh-gateway-env.conf
+ExecStart=/usr/local/bin/consul connect envoy -gateway=mesh -register -service "gateway-primary" -address '{{ GetInterfaceIP "eth0" }}:8181' -wan-address "${PUBLIC_IP}:8181" -grpc-addr="https://127.0.0.1:8502" -token="${CONSUL_MESH_GATEWAY_TOKEN}"
+ExecStop=/bin/sleep 5
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

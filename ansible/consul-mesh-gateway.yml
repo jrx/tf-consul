@@ -1,0 +1,56 @@
+---
+- name: install consul mesh gateway
+  hosts: all
+  serial: 1
+  become: true
+
+  vars:
+    ENVOY_VERSION: "1.22.0"
+    CONSUL_MESH_GATEWAY_TOKEN: ""
+    PUBLIC_IP: "127.0.0.1"
+
+  tasks:
+
+  - name: install epel-release
+    yum:
+      name: epel-release
+      state: present
+
+  - name: install common packages
+    yum:
+      name:
+        - unzip
+        - vim
+        - jq
+        - netcat
+      state: present
+
+  - name: download binary
+    unarchive:
+      src: "https://archive.tetratelabs.io/envoy/download/v{{ ENVOY_VERSION }}/envoy-v{{ ENVOY_VERSION }}-linux-amd64.tar.xz"
+      dest: /usr/local/bin
+      remote_src: yes
+      extra_opts: [--strip-components=2]
+      mode: 0755
+      owner: root
+      group: root
+
+  - name: configure env file
+    template:
+      src: ./files/consul-mesh-gateway-env.conf.j2
+      dest: /etc/consul.d/mesh-gateway-env.conf
+      mode: 0640
+      owner: consul
+      group: consul
+
+  - name: configure systemd
+    copy:
+      src: ./files/consul-mesh-gateway.service
+      dest: /etc/systemd/system/consul-mesh-gateway.service
+
+  - name: start consul mesh gateway
+    systemd:
+      name: consul-mesh-gateway.service
+      state: restarted
+      enabled: yes
+      daemon_reload: yes

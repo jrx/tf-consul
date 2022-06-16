@@ -44,6 +44,11 @@ variable "num_consul" {
   default     = 3
 }
 
+variable "num_consul_mesh_gateway" {
+  description = "Specify the amount of Consul Mesh Gateways."
+  default     = 0
+}
+
 variable "num_nomad_server" {
   description = "Specify the amount of Nomad servers. For redundancy you should have at least 3."
   default     = 0
@@ -64,8 +69,18 @@ variable "nomad_version" {
   description = "Specifies which Nomad version instruction to use."
 }
 
+variable "envoy_version" {
+  default     = "1.22.0"
+  description = "Specifies which Envoy version instruction to use. (Mesh Gateway only)"
+}
+
 variable "consul_instance_type" {
   description = "Consul server instance type."
+  default     = "t3.micro"
+}
+
+variable "consul_mesh_gateway_instance_type" {
+  description = "Consul Mesh Gateway instance type."
   default     = "t3.micro"
 }
 

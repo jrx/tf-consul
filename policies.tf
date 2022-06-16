@@ -21,6 +21,30 @@ resource "consul_acl_token" "consul_client" {
   local       = true
 }
 
+resource "consul_acl_policy" "consul_mesh_gateway" {
+  name  = "consul-mesh-gateway"
+  rules = <<-RULE
+    service_prefix "gateway" {
+      policy = "write"
+    }
+    service_prefix "" {
+      policy = "read"
+    }
+    node_prefix "" {
+      policy = "read"
+    }
+    agent_prefix "" {
+      policy = "read"
+    }
+    RULE
+}
+
+resource "consul_acl_token" "consul_mesh_gateway" {
+  description = "Consul Mesh Gateway Policy"
+  policies    = ["${consul_acl_policy.consul_mesh_gateway.name}"]
+  local       = true
+}
+
 resource "consul_acl_policy" "nomad_server" {
   name  = "nomad-server"
   rules = <<-RULE
@@ -83,6 +107,10 @@ resource "consul_config_entry" "count-api" {
 }
 data "consul_acl_token_secret_id" "consul_client" {
   accessor_id = consul_acl_token.consul_client.id
+}
+
+data "consul_acl_token_secret_id" "consul_mesh_gateway" {
+  accessor_id = consul_acl_token.consul_mesh_gateway.id
 }
 
 data "consul_acl_token_secret_id" "nomad_server" {
