@@ -1,6 +1,7 @@
-server     = true
-datacenter = "dc1"
-node_name  = "{{ NODE_NAME }}"
+server             = true
+datacenter         = "dc1"
+primary_datacenter = "dc1"
+node_name          = "{{ NODE_NAME }}"
 
 acl {
   enabled                  = true
@@ -59,6 +60,7 @@ enable_syslog = true
 
 connect {
   enabled = true
+  enable_mesh_gateway_wan_federation = true
 }
 
 node_meta = {

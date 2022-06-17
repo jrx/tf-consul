@@ -21,14 +21,42 @@ resource "consul_acl_token" "consul_client" {
   local       = true
 }
 
+resource "consul_acl_policy" "consul_replication" {
+  name  = "consul-replication"
+  rules = <<-RULE
+  operator = "write"
+  agent_prefix "" {
+    policy = "read"
+  }
+  node_prefix "" {
+    policy = "write"
+  }
+  namespace_prefix "" {
+    acl = "write"
+    service_prefix "" {
+      policy = "read"
+      intentions = "read"
+    }
+  }
+    RULE
+}
+
+resource "consul_acl_token" "consul_replication" {
+  description = "Consul Replication Policy"
+  policies    = ["${consul_acl_policy.consul_replication.name}"]
+  local       = false
+}
+
 resource "consul_acl_policy" "consul_mesh_gateway" {
   name  = "consul-mesh-gateway"
   rules = <<-RULE
-    service_prefix "gateway" {
-      policy = "write"
-    }
-    service_prefix "" {
-      policy = "read"
+    namespace_prefix "" {
+      service_prefix "gateway" {
+        policy = "write"
+      }
+      service_prefix "" {
+        policy = "read"
+      }
     }
     node_prefix "" {
       policy = "read"
@@ -92,6 +120,17 @@ resource "consul_acl_token" "nomad_client" {
   local       = true
 }
 
+resource "consul_config_entry" "proxy_defaults" {
+  kind = "proxy-defaults"
+  name = "global"
+
+  config_json = jsonencode({
+    MeshGateway = {
+      Mode = "local"
+    }
+  })
+}
+
 resource "consul_config_entry" "count-api" {
   name = "count-api"
   kind = "service-intentions"
@@ -105,6 +144,7 @@ resource "consul_config_entry" "count-api" {
     }]
   })
 }
+
 data "consul_acl_token_secret_id" "consul_client" {
   accessor_id = consul_acl_token.consul_client.id
 }
