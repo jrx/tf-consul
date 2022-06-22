@@ -139,7 +139,10 @@ resource "consul_config_entry" "count-api" {
     Sources = [{
       Action     = "allow"
       Name       = "count-dashboard"
-      Precedence = 9
+      Type       = "consul"
+    },{
+      Action     = "allow"
+      Name       = "count-dashboard-dc2"
       Type       = "consul"
     }]
   })
