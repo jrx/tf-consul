@@ -21,6 +21,25 @@ resource "consul_acl_token" "consul_client" {
   local       = true
 }
 
+resource "consul_acl_policy" "consul_anonymous" {
+  name  = "consul-anonymous"
+  rules = <<-RULE
+    namespace_prefix "" {
+      service_prefix "" {
+        policy = "read"
+      }
+      node_prefix "" {
+        policy = "read"
+      }
+    }
+    RULE
+}
+
+resource "consul_acl_token_policy_attachment" "attachment" {
+    token_id = "00000000-0000-0000-0000-000000000002"
+    policy   = "${consul_acl_policy.consul_anonymous.name}"
+}
+
 resource "consul_acl_policy" "consul_replication" {
   name  = "consul-replication"
   rules = <<-RULE
