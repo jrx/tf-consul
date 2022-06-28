@@ -29,7 +29,7 @@ resource "aws_instance" "consul_mesh_gateway" {
   }
   provisioner "remote-exec" {
     inline = [
-      "cd ansible; ansible-playbook -c local -i \"localhost,\" -e 'ENVOY_VERSION=${var.envoy_version} CONSUL_MESH_GATEWAY_TOKEN=${nonsensitive(data.consul_acl_token_secret_id.consul_mesh_gateway.secret_id)} PUBLIC_IP=${self.public_ip}' consul-mesh-gateway.yml",
+      "cd ansible; ansible-playbook -c local -i \"localhost,\" -e 'ENVOY_VERSION=${var.envoy_version} CONSUL_MESH_GATEWAY_TOKEN=${nonsensitive(data.consul_acl_token_secret_id.consul_mesh_gateway.secret_id)} PUBLIC_IP=${self.private_ip}' consul-mesh-gateway.yml",
     ]
   }
 
