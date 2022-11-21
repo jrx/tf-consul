@@ -13,7 +13,7 @@ resource "aws_instance" "consul" {
   provisioner "remote-exec" {
     inline = [
       "sudo yum -y install epel-release",
-      "sudo yum -y install ansible",
+      "sudo yum -y install ansible-core",
       "mkdir /home/${var.instance_username}/ansible",
     ]
   }
