@@ -26,7 +26,7 @@ resource "consul_acl_policy" "consul_anonymous" {
   rules = <<-RULE
     namespace_prefix "" {
       service_prefix "" {
-        policy = "read"
+        policy = "write"
       }
       node_prefix "" {
         policy = "read"
