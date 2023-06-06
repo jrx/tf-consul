@@ -36,8 +36,8 @@ resource "consul_acl_policy" "consul_anonymous" {
 }
 
 resource "consul_acl_token_policy_attachment" "attachment" {
-    token_id = "00000000-0000-0000-0000-000000000002"
-    policy   = "${consul_acl_policy.consul_anonymous.name}"
+  token_id = "00000000-0000-0000-0000-000000000002"
+  policy   = consul_acl_policy.consul_anonymous.name
 }
 
 resource "consul_acl_policy" "consul_replication" {
@@ -156,13 +156,13 @@ resource "consul_config_entry" "count-api" {
 
   config_json = jsonencode({
     Sources = [{
-      Action     = "allow"
-      Name       = "count-dashboard"
-      Type       = "consul"
-    },{
-      Action     = "allow"
-      Name       = "count-dashboard-dc2"
-      Type       = "consul"
+      Action = "allow"
+      Name   = "count-dashboard"
+      Type   = "consul"
+      }, {
+      Action = "allow"
+      Name   = "count-dashboard-dc2"
+      Type   = "consul"
     }]
   })
 }

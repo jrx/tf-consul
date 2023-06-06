@@ -9,13 +9,13 @@ Environment="CONSUL_HTTP_ADDR=https://127.0.0.1:8501"
 Environment="CONSUL_CACERT=/etc/consul.d/consul-agent-ca.pem"
 Environment="CONSUL_CLIENT_CERT=/etc/consul.d/dc1-client-consul-0.pem"
 Environment="CONSUL_CLIENT_KEY=/etc/consul.d/dc1-client-consul-0-key.pem"
-Environment="CONSUL_GRPC_ADDR=https://127.0.0.1:8502"
+Environment="CONSUL_GRPC_ADDR=https://127.0.0.1:8503"
 Type=simple
 User=consul
 Group=consul
 Restart=on-failure
 EnvironmentFile=/etc/consul.d/mesh-gateway-env.conf
-ExecStart=/usr/local/bin/consul connect envoy -gateway=mesh -register -service="gateway-primary" -address '{{ GetInterfaceIP "eth0" }}:8181'  -wan-address "${PUBLIC_IP}:8181" -grpc-addr "https://127.0.0.1:8502" -token="${CONSUL_MESH_GATEWAY_TOKEN}" -expose-servers -- -l info
+ExecStart=/usr/local/bin/consul connect envoy -gateway=mesh -register -service="gateway-primary" -address '{{ GetInterfaceIP "eth0" }}:8181'  -wan-address "${PUBLIC_IP}:8181" -grpc-addr "https://127.0.0.1:8503" -token="${CONSUL_MESH_GATEWAY_TOKEN}" -expose-servers -- -l info
 ExecReload=/bin/kill -HUP $MAINPID
 KillSignal=SIGINT
 SyslogIdentifier=connect

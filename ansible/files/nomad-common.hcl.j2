@@ -3,10 +3,12 @@ data_dir = "/var/nomad/data"
 
 consul {
   address = "127.0.0.1:8501"
+  grpc_address = "127.0.0.1:8503"
   token = "{{ CONSUL_NOMAD_TOKEN }}"
   ssl = true
   verify_ssl = true
   ca_file = "/etc/consul.d/consul-agent-ca.pem"
+  grpc_ca_file = "/etc/consul.d/consul-agent-ca.pem"
   key_file = "/etc/consul.d/dc1-client-consul-0-key.pem"
   cert_file = "/etc/consul.d/dc1-client-consul-0.pem"
 }

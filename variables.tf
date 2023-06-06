@@ -31,7 +31,8 @@ variable "amis" {
   default = {
     # eu-north-1 = "ami-026f0eb2e8006617d" # centos 7
     # eu-north-1 = "ami-0e201bc52c64d7b5a" # centos 8
-    eu-north-1 = "ami-03ab37ade73ce076e" # rocky linux 8
+    # eu-north-1 = "ami-03ab37ade73ce076e" # rocky linux 8
+    eu-north-1 = "ami-07c0f40b66e9893c4" # rocky linux 9
   }
 }
 
@@ -76,22 +77,22 @@ variable "envoy_version" {
 
 variable "consul_instance_type" {
   description = "Consul server instance type."
-  default     = "t3.micro"
+  default     = "t3.small"
 }
 
 variable "consul_mesh_gateway_instance_type" {
   description = "Consul Mesh Gateway instance type."
-  default     = "t3.micro"
+  default     = "t3.small"
 }
 
 variable "nomad_server_instance_type" {
   description = "Nomad server instance type."
-  default     = "t3.micro"
+  default     = "t3.small"
 }
 
 variable "nomad_client_instance_type" {
   description = "Nomad client instance type."
-  default     = "t3.micro"
+  default     = "t3.small"
 }
 
 variable "nomad_license" {

@@ -32,25 +32,32 @@
     yum_repository:
       name: docker-ce
       description: Docker CE Repository
-      baseurl: "https://download.docker.com/linux/centos/8/$basearch/stable"
+      baseurl: "https://download.docker.com/linux/centos/9/$basearch/stable" 
       enabled: yes
       gpgcheck: yes
       gpgkey: https://download.docker.com/linux/centos/gpg
 
   - name: preinstall containerd
     yum:
-      name: containerd.io-1.5.11
+      name: containerd.io
       update_cache: true
       state: present
+
   - name: install docker
     yum:
-      name: "docker-ce-20.10.9"
+      name: "docker-ce"
       update_cache: true
       state: present
     register: yum_docker_install
     until: yum_docker_install is success
     retries: 3
     delay: 60
+
+  - name: install docker cli
+    yum:
+      name: docker-ce-cli
+      update_cache: true
+      state: present
 
   - name: enable docker
     systemd:
